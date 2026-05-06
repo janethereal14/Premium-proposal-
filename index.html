@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For My Forever</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:italic,wght@400;700&family=Inter:wght@300&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --gold: #d4af37;
+            --bg-black: #050505;
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            background-color: var(--bg-black);
+            color: #fff;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* Initial locked state */
+        body.locked {
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        .page {
+            display: none; /* Pages hidden by default */
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            text-align: center;
+            width: 100%;
+        }
+
+        .active { display: flex; }
+
+        /* Page 1 Styles */
+        #pass-input {
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid var(--gold);
+            color: white;
+            font-size: 2.5rem;
+            text-align: center;
+            letter-spacing: 12px;
+            width: 200px;
+            outline: none;
+            margin-bottom: 30px;
+        }
+
+        .btn-gold {
+            background: transparent;
+            border: 1px solid var(--gold);
+            color: var(--gold);
+            padding: 12px 40px;
+            cursor: pointer;
+            transition: 0.4s;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+        }
+
+        .btn-gold:hover {
+            background: var(--gold);
+            color: #000;
+        }
+
+        /* Page 2 Styles */
+        #canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .content-wrap {
+            z-index: 1;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 50px 20px;
+        }
+
+        .para {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 2.5s ease, transform 2s ease;
+            margin-bottom: 300px;
+            font-size: 1.6rem;
+            line-height: 2.2;
+            font-family: 'Playfair Display', serif;
+        }
+
+        .para.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .photo-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 50px;
+        }
+
+        .photo-grid img {
+            width: 100%;
+            opacity: 0;
+            transition: 2s;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+        }
+
+        .photo-grid img.visible { opacity: 1; }
+
+        /* Page 3 Styles */
+        .diamond-shine {
+            font-size: 6rem;
+            filter: drop-shadow(0 0 15px #fff);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+    </style>
+</head>
+<body class="locked">
+
+    <audio id="bg-music" loop>
+        <source src="Justin-Bieber-Come-Around-Me-(TrendyBeatz.com).mp3" type="audio/mpeg">
+    </audio>
+
+    <section id="page1" class="page active">
+        <h2 style="color: var(--gold); letter-spacing: 8px;">PRIVATE ACCESS</h2>
+        <input type="password" id="pass-input" maxlength="4">
+        <button class="btn-gold" onclick="checkPass()">Unlock</button>
+    </section>
+
+    <section id="page2" class="page" style="justify-content: flex-start;">
+        <canvas id="canvas"></canvas>
+        <div class="content-wrap">
+            <p class="para" style="margin-top: 30vh;">They say the universe is made of atoms, but mine is made of moments with you.</p>
+            <p class="para">It’s the way you laugh when you’re tired, and how you make every simple minute feel like a movie.</p>
+            <p class="para">I found a home in you that I didn't even know I was looking for. You are my sanctuary.</p>
+            <p class="para">I promise to spend the rest of my life trying to be worthy of the love you give so freely.</p>
+            <p class="para">I’ll let my heart speak now... <br><span style="color:var(--gold); font-size: 1rem;">SCROLL DOWN SLOWLY</span></p>
+            
+            <h2 class="para" style="color: var(--gold);">Our Memories Together</h2>
+            <div class="photo-grid">
+                <img src="Screenshot_2026-05-04-15-34-31-232.jpeg" class="mem-pic">
+                <img src="Screenshot_2026-05-04-15-30-22-145.jpeg" class="mem-pic">
+                <img src="Screenshot_2026-05-04-15-51-20-647.jpeg" class="mem-pic">
+                <img src="Screenshot_2026-05-04-15-49-55-674.jpeg" class="mem-pic">
+            </div>
+
+            <div style="height: 300px;"></div>
+            <button class="btn-gold para" onclick="showProposal()">Click for a surprise</button>
+            <div style="height: 100px;"></div>
+        </div>
+    </section>
+
+    <section id="page3" class="page">
+        <div id="ring-box" style="font-size: 5rem; cursor: pointer;">🎁</div>
+        <div id="diamond" style="display:none;" class="diamond-shine">💍</div>
+        
+        <div id="proposal-ui" style="display:none; margin-top: 30px;">
+            <h2 id="prop-text">Will you make me the happiest person alive?</h2>
+            <button class="btn-gold" onclick="sayYes()">YES</button>
+            <button class="btn-gold" id="no-btn" onmouseover="moveNo()">NO</button>
+        </div>
+        
+        <div id="final-celebration" style="display:none; margin-top: 20px;">
+            <video width="320" id="v-player"><source src="VID-20260409-WA0002~2.mp4" type="video/mp4"></video>
+            <h1 style="color: var(--gold);">Yes! Finally!!! ❤️</h1>
+        </div>
+    </section>
+
+    <script>
+        // Enter Key Support
+        document.getElementById('pass-input').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') checkPass();
+        });
+
+        function checkPass() {
+            const pass = document.getElementById('pass-input').value;
+            if(pass === "1234") {
+                document.getElementById('page1').style.display = 'none';
+                document.getElementById('page2').style.display = 'flex';
+                document.body.classList.remove('locked');
+                document.body.style.overflow = "auto";
+                document.getElementById('bg-music').play();
+                startHearts();
+                initObserver();
+                autoScroll();
+            } else {
+                alert("Incorrect Password");
+            }
+        }
+
+        function startHearts() {
+            const canvas = document.getElementById('canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            const hearts = [];
+            for(let i=0; i<100; i++) {
+                hearts.push({ x: Math.random()*canvas.width, y: Math.random()*canvas.height, size: Math.random()*15+10, speed: Math.random()*2+1, opacity: 1 });
+            }
+            function draw() {
+                ctx.clearRect(0,0,canvas.width, canvas.height);
+                hearts.forEach(h => {
+                    ctx.globalAlpha = h.opacity;
+                    ctx.fillStyle = '#ff4d6d';
+                    ctx.fillText('❤️', h.x, h.y);
+                    h.y += h.speed;
+                    h.opacity -= 0.002;
+                    if(h.y > canvas.height) { h.y = -20; h.opacity = 1; }
+                });
+                requestAnimationFrame(draw);
+            }
+            draw();
+        }
+
+        function initObserver() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if(entry.isIntersecting) entry.target.classList.add('visible');
+                });
+            }, { threshold: 0.1 });
+            document.querySelectorAll('.para, .mem-pic').forEach(el => observer.observe(el));
+        }
+
+        function autoScroll() {
+            setTimeout(() => {
+                const scroller = setInterval(() => {
+                    window.scrollBy(0, 1);
+                    if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) clearInterval(scroller);
+                }, 40);
+            }, 3000);
+        }
+
+        function showProposal() {
+            document.getElementById('page2').style.display = 'none';
+            document.getElementById('page3').style.display = 'flex';
+            window.scrollTo(0,0);
+            document.getElementById('ring-box').onclick = function() {
+                this.style.display = 'none';
+                document.getElementById('diamond').style.display = 'block';
+                document.getElementById('proposal-ui').style.display = 'block';
+            };
+        }
+
+        function moveNo() {
+            const btn = document.getElementById('no-btn');
+            btn.style.position = 'fixed';
+            btn.style.left = Math.random() * 80 + '%';
+            btn.style.top = Math.random() * 80 + '%';
+            document.getElementById('prop-text').innerText = "Please choose YES! ❤️";
+        }
+
+        function sayYes() {
+            document.getElementById('proposal-ui').style.display = "none";
+            document.getElementById('final-celebration').style.display = "block";
+            document.getElementById('v-player').play();
+        }
+    </script>
+</body>
+  </html>
